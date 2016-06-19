@@ -1,0 +1,38 @@
+<input id="file" type="file"><br/>
+<label id="progress">Progess</label><br/>
+<label id="url">Url to access download</label><br/>
+<script src="tus.js"></script> 
+<script>
+    const full = location.protocol + '//' + location.hostname + ':1080/files/'
+    const input = document.getElementById('file')
+    const progress = document.getElementById('progress')
+    const url = document.getElementById('url')
+
+    input.addEventListener("change", function(e) {
+        // Get the selected file from the input element
+        var file = e.target.files[0]
+
+        console.log(full);
+        // Create a new tus upload
+        var upload = new tus.Upload(file, {
+            endpoint: full,
+
+            onError: function(error) {
+                console.log(error);
+                alert("Failed because: " + error)
+            },
+            onProgress: function(bytesUploaded, bytesTotal) {
+                var percentage = (bytesUploaded / bytesTotal * 100).toFixed(2)
+                console.log(bytesUploaded, bytesTotal, percentage + "%")
+                progress.innerHTML = `${percentage}%`
+            },
+            onSuccess: function() {
+                //  url.innerHTML = `<a href="${upload.url}">${upload.url}</a>`
+                alert('sucess')
+            }
+        })
+
+        // Start the upload
+        upload.start()
+    })
+</script>
